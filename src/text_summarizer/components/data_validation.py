@@ -28,9 +28,9 @@ class DataValidation:
                     f.write('All required files are present\n')
             
             if validation_status:
-                logger.info("✅ All required files are present")
+                logger.info("All required files are present")
             else:
-                logger.error(f"❌ Missing files: {missing_files}")
+                logger.error(f"Missing files: {missing_files}")
                 
             return validation_status
             

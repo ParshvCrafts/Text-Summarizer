@@ -47,7 +47,7 @@ class ModelTrainingConfig:
     remove_unused_columns: bool  
     report_to: str 
     
-@dataclass(frozen= True)
+@dataclass(frozen=True)
 class ModelEvaluationConfig:
     root_dir: Path 
     data_path: Path

@@ -7,8 +7,12 @@ class ModelEvaluationPipeline:
         pass
     
     def main(self):
-        config = ConfigurationManager()
-        model_evaluation_config = config.get_model_evaluation_config()
-        model_evaluation = ModelEvaluation(config=model_evaluation_config)
-        model_evaluation.evaluate()
-        logger.info("Model evaluation completed successfully!")
+        try:
+            config_manager = ConfigurationManager()
+            model_evaluation_config = config_manager.get_model_evaluation_config()
+            model_evaluation = ModelEvaluation(config=model_evaluation_config)
+            results = model_evaluation.evaluate()
+            logger.info(f"Model evaluation completed successfully! Results: {results}")
+        except Exception as e:
+            logger.error(f"Model evaluation pipeline failed: {str(e)}")
+            raise
