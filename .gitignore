@@ -216,9 +216,9 @@ frontend/.env.local
 frontend/.env.production
 
 # Root node_modules (if any)
-node_modules/
-package-lock.json
-package.json
+/node_modules/
+/package-lock.json
+/package.json
 
 # OS files
 .DS_Store
