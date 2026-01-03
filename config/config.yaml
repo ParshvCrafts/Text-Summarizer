@@ -1,0 +1,90 @@
+# =============================================================================
+# Text Summarizer Configuration
+# =============================================================================
+# IMPORTANT: Choose a training profile below based on your hardware!
+#
+# TRAINING PROFILES:
+# ------------------
+# 1. zero_training (RECOMMENDED for laptops)
+#    - Uses pre-fine-tuned model, NO training needed
+#    - Just download and use for inference
+#    - Time: ~2 minutes to download
+#
+# 2. quick_test
+#    - 10% of data, 1 epoch, for testing pipeline
+#    - Time: ~10-15 minutes
+#
+# 3. laptop_friendly  
+#    - Light fine-tuning of pre-trained model
+#    - Aggressive memory optimization
+#    - Time: ~30-60 minutes
+#
+# 4. full_training (cloud/powerful GPU only)
+#    - Complete training with all data
+#    - Time: 2-4 hours
+# =============================================================================
+
+# Active training profile (change this to switch profiles)
+training_profile: zero_training  # Options: zero_training, quick_test, laptop_friendly, full_training
+
+artifacts_root: artifacts
+
+# ------------------------------
+# Data Ingestion Configuration
+# ------------------------------
+data_ingestion:
+  root_dir: artifacts/data_ingestion
+  source_URL: https://github.com/entbappy/Branching-tutorial/raw/master/summarizer-data.zip
+  local_data_file: artifacts/data_ingestion/data.zip
+  unzip_dir: artifacts/data_ingestion
+
+# ------------------------------
+# Data Validation Configuration
+# ------------------------------
+data_validation:
+  root_dir: artifacts/data_validation
+  STATUS_FILE: artifacts/data_validation/status.txt
+  ALL_REQUIRED_FILES: ["train", "test", "validation"]
+
+# ------------------------------
+# Data Transformation Configuration
+# ------------------------------
+data_transformation:
+  root_dir: artifacts/data_transformation
+  data_path: artifacts/data_ingestion/samsum_dataset
+  tokenizer_name: philschmid/flan-t5-base-samsum  # Pre-trained on SAMSum!
+
+# ------------------------------
+# Model Trainer Configuration
+# ------------------------------
+model_trainer:
+  root_dir: artifacts/model_trainer
+  data_path: artifacts/data_transformation/samsum_dataset
+  model_ckpt: philschmid/flan-t5-base-samsum  # Pre-trained on SAMSum (ROUGE-1: 47.24)
+
+# ------------------------------
+# Model Evaluation Configuration
+# ------------------------------
+model_evaluation:
+  root_dir: artifacts/model_evaluation
+  data_path: artifacts/data_transformation/samsum_dataset
+  model_path: artifacts/model_trainer/best_model
+  tokenizer_path: artifacts/model_trainer/best_model
+  metric_file_name: artifacts/model_evaluation/metrics.csv
+
+# =============================================================================
+# MODEL OPTIONS (for reference)
+# =============================================================================
+# PRE-TRAINED ON SAMSUM (Zero/Light training):
+#   - philschmid/flan-t5-base-samsum     (~990MB, ROUGE-1: 47.24) 
+#   - philschmid/bart-large-cnn-samsum   (~1.6GB, ROUGE-1: ~41)
+#
+# SMALL MODELS (Fast training):
+#   - google/flan-t5-small               (~308MB, needs fine-tuning)
+#   - sshleifer/distilbart-cnn-12-6      (~1.2GB, 60% faster than BART-large)
+#   - facebook/bart-base                 (~558MB, half of bart-large)
+#
+# LARGE MODELS (Cloud only):
+#   - facebook/bart-large-cnn            (~1.6GB, excellent quality)
+#   - google/pegasus-cnn_dailymail       (~2.2GB, high memory usage)
+# =============================================================================

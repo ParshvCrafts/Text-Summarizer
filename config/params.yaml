@@ -1,0 +1,146 @@
+# =============================================================================
+# Training Hyperparameters Configuration
+# =============================================================================
+# TRAINING PROFILES - Choose based on your hardware and time constraints
+# The active profile is set in config.yaml (training_profile field)
+# =============================================================================
+
+# =============================================================================
+# PROFILE: zero_training (RECOMMENDED - No training needed!)
+# =============================================================================
+# Uses philschmid/flan-t5-base-samsum which is already fine-tuned on SAMSum
+# ROUGE-1: 47.24 out of the box - better than most custom training!
+# Time: ~2 minutes to download model
+# Just run inference directly, skip training entirely.
+
+# =============================================================================
+# PROFILE: quick_test (For testing the pipeline works)
+# =============================================================================
+quick_test:
+  num_train_epochs: 1
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 5e-6                    # Very low LR for pre-trained model
+  warmup_ratio: 0.1
+  max_grad_norm: 1.0
+  eval_strategy: steps
+  eval_steps: 100
+  save_strategy: steps
+  save_steps: 100
+  save_total_limit: 2
+  early_stopping_patience: 2             # Stop quickly if overfitting
+  early_stopping_threshold: 0.01
+  logging_steps: 25
+  fp16: true
+  max_input_length: 512                  # Reduced for speed
+  max_target_length: 64
+  data_sample_fraction: 0.1              # Use only 10% of data
+  gradient_checkpointing: true           # Trade compute for memory
+
+# =============================================================================
+# PROFILE: laptop_friendly (Safe for laptops, prevents overheating)
+# =============================================================================
+laptop_friendly:
+  num_train_epochs: 1                    # Just 1 epoch to avoid overfitting
+  per_device_train_batch_size: 1         # Minimal batch size
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 8         # Effective batch = 8
+  learning_rate: 1e-5                    # Very conservative LR
+  warmup_ratio: 0.1
+  max_grad_norm: 1.0
+  eval_strategy: steps
+  eval_steps: 200
+  save_strategy: steps
+  save_steps: 200
+  save_total_limit: 2
+  early_stopping_patience: 3
+  early_stopping_threshold: 0.005
+  logging_steps: 50
+  fp16: true
+  max_input_length: 512
+  max_target_length: 128
+  data_sample_fraction: 0.5              # Use 50% of data
+  gradient_checkpointing: true
+  dataloader_num_workers: 0              # Prevent multiprocessing issues on Windows
+
+# =============================================================================
+# PROFILE: full_training (Cloud/powerful GPU only)
+# =============================================================================
+full_training:
+  num_train_epochs: 3
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 2e-5
+  warmup_ratio: 0.1
+  max_grad_norm: 1.0
+  eval_strategy: steps
+  eval_steps: 500
+  save_strategy: steps
+  save_steps: 500
+  save_total_limit: 3
+  early_stopping_patience: 3
+  early_stopping_threshold: 0.001
+  logging_steps: 100
+  fp16: true
+  max_input_length: 1024
+  max_target_length: 128
+  data_sample_fraction: 1.0              # Use all data
+  gradient_checkpointing: false
+
+# =============================================================================
+# DEFAULT TRAINING ARGUMENTS (used as base, overridden by profile)
+# =============================================================================
+TrainingArguments:
+  num_train_epochs: 1
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 8
+  learning_rate: 1e-5
+  warmup_ratio: 0.1
+  warmup_steps: 0
+  lr_scheduler_type: cosine
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  eval_strategy: steps
+  eval_steps: 200
+  save_strategy: steps
+  save_steps: 200
+  save_total_limit: 2
+  load_best_model_at_end: true
+  metric_for_best_model: eval_loss
+  greater_is_better: false
+  early_stopping_patience: 3
+  early_stopping_threshold: 0.005
+  logging_steps: 50
+  logging_first_step: true
+  report_to: none
+  fp16: true
+  dataloader_num_workers: 0
+  dataloader_pin_memory: true
+  max_input_length: 512
+  max_target_length: 128
+  prediction_loss_only: false
+  remove_unused_columns: false
+  seed: 42
+  gradient_checkpointing: true
+  data_sample_fraction: 1.0
+
+# =============================================================================
+# CHECKPOINT RESUMPTION
+# =============================================================================
+Checkpointing:
+  save_every_n_steps: 200                # Save checkpoint every N steps
+  keep_n_checkpoints: 3                  # Keep last N checkpoints
+  auto_resume: true                      # Automatically resume from last checkpoint
+  checkpoint_dir: artifacts/model_trainer/checkpoints
+
+# =============================================================================
+# EXPERIMENT TRACKING (Optional)
+# =============================================================================
+ExperimentTracking:
+  enabled: false
+  project_name: "text-summarizer"
+  run_name: null
+  tags: ["flan-t5", "samsum", "dialogue-summarization"]

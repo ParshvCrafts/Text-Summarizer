@@ -1,0 +1,26 @@
+# Text Summarizer - Production Requirements
+# ==========================================
+# Core ML/NLP
+transformers>=4.36.0
+datasets>=2.16.0
+evaluate>=0.4.0
+rouge-score>=0.1.2
+torch>=2.1.0
+accelerate>=0.25.0
+
+# Data processing
+pandas>=2.0.0
+numpy>=1.24.0
+PyYAML>=6.0
+python-box>=7.0.0
+
+# Utilities
+tqdm>=4.66.0
+
+# API Server
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.5.0
+
+# Logging and monitoring (optional)
+# wandb>=0.16.0  # Uncomment to enable Weights & Biases

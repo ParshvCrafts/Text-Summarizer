@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="AI-powered dialogue summarization with instant results, confidence scoring, and intelligent length control." />
+    <meta name="theme-color" content="#0a0a0f" />
+    <title>Text Summarizer | AI-Powered Dialogue Summarization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#06b6d4',
+              'primary-dark': '#0891b2',
+              secondary: '#8b5cf6',
+              'secondary-dark': '#7c3aed',
+              accent: '#22d3ee',
+              success: '#10b981',
+              warning: '#f59e0b',
+              error: '#ef4444',
+              'dark-bg': '#0a0a0f',
+              'dark-card': '#111827',
+              'dark-border': '#1f2937',
+            },
+            fontFamily: {
+              sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+              mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+            },
+          },
+        },
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
