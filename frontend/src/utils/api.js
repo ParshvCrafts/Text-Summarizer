@@ -1,14 +1,17 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
-export const summarizeText = async (text, targetLength = null) => {
+export const summarizeText = async (text, targetLength = null, onStatusUpdate = null) => {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000);
+  const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout for cold starts
 
   try {
     const body = { text };
     if (targetLength) {
       body.target_length = targetLength;
     }
+
+    // Notify that request is starting
+    if (onStatusUpdate) onStatusUpdate('Connecting to AI model...');
 
     const response = await fetch(`${API_BASE_URL}/summarize`, {
       method: 'POST',
@@ -23,6 +26,16 @@ export const summarizeText = async (text, targetLength = null) => {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
+      
+      // Handle model loading (503)
+      if (response.status === 503) {
+        throw new Error(error.detail || 'Model is warming up. Please try again in a few seconds.');
+      }
+      // Handle rate limiting (429)
+      if (response.status === 429) {
+        throw new Error('Too many requests. Please wait a moment and try again.');
+      }
+      
       throw new Error(error.detail || `HTTP error! status: ${response.status}`);
     }
 
@@ -30,7 +43,7 @@ export const summarizeText = async (text, targetLength = null) => {
   } catch (error) {
     clearTimeout(timeoutId);
     if (error.name === 'AbortError') {
-      throw new Error('Request timed out. Please try again.');
+      throw new Error('Request timed out. The model may be loading - please try again.');
     }
     throw error;
   }
